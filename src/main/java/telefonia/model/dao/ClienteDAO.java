@@ -143,5 +143,10 @@ public class ClienteDAO {
 		return c;
 	}
 
+	public boolean cpfJaUtilizado(String cpf) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 
 }

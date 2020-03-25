@@ -1,6 +1,11 @@
 package telefonia.executavel;
 
+import java.util.ArrayList;
+
+import telefonia.model.Cliente;
 import telefonia.model.Endereco;
+import telefonia.model.Telefone;
+import telefonia.model.bo.ClienteBO;
 import telefonia.model.dao.EnderecoDAO;
 
 public class Exercicio1 {
