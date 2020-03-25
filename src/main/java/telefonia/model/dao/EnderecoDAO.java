@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import telefonia.model.Endereco;
+import telefonia.model.vo.Endereco;
 
 public class EnderecoDAO implements BaseDAO<Endereco>{
 

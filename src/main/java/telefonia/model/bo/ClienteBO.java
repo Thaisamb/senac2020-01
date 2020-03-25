@@ -1,7 +1,7 @@
 package telefonia.model.bo;
 
 import telefonia.model.dao.ClienteDAO;
-import telefonia.model.Cliente;
+import telefonia.model.vo.Cliente;
 
 public class ClienteBO {
 

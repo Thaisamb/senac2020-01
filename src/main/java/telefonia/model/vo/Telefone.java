@@ -1,4 +1,4 @@
-package telefonia.model;
+package telefonia.model.vo;
 
 public class Telefone {
 	private int id;

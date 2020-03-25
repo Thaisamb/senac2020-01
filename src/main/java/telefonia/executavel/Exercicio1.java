@@ -2,11 +2,11 @@ package telefonia.executavel;
 
 import java.util.ArrayList;
 
-import telefonia.model.Cliente;
-import telefonia.model.Endereco;
-import telefonia.model.Telefone;
 import telefonia.model.bo.ClienteBO;
 import telefonia.model.dao.EnderecoDAO;
+import telefonia.model.vo.Cliente;
+import telefonia.model.vo.Endereco;
+import telefonia.model.vo.Telefone;
 
 public class Exercicio1 {
 	public static void main(String[] args) {

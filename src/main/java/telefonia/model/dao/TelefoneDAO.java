@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import telefonia.model.Cliente;
-import telefonia.model.Telefone;
+import telefonia.model.vo.Cliente;
+import telefonia.model.vo.Telefone;
 
 public class TelefoneDAO {
 
