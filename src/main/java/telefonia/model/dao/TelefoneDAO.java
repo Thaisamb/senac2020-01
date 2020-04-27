@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import telefonia.model.vo.Cliente;
 import telefonia.model.vo.Telefone;
 
-public class TelefoneDAO {
+public class TelefoneDAO implements BaseDAO<Telefone> {
 
 	public Telefone salvar(Telefone novoTelefone) {
-		
+
 		Connection conn = Banco.getConnection();
 		String sql = "INSERT INTO TELEFONE (codigoPais, ddd, numero, movel, idCliente, ativo) "
 				+ "VALUES (?,?,?,?,?,?)";
@@ -63,12 +63,6 @@ public class TelefoneDAO {
 		return quantidadeLinhasAfetadas > 0;
 	}
 
-	/**
-	 * Associa e ativa uma lista de telefones a um determinado cliente.
-	 * 
-	 * @param dono      o cliente que possui os telefones
-	 * @param telefones a lista de telefones
-	 */
 	public void ativarTelefones(Cliente dono, ArrayList<Telefone> telefones) {
 		for (Telefone t : telefones) {
 			t.setDono(dono);
@@ -83,14 +77,9 @@ public class TelefoneDAO {
 		}
 	}
 
-	/**
-	 * Desativa todos os telefones de um determinado cliente.
-	 * 
-	 * @param idCliente a chave primária do cliente
-	 */
 	public void desativarTelefones(int idCliente) {
 		Connection conn = Banco.getConnection();
-		String sql = " UPDATE TELEFONE " + " SET idCliente=0, ativo=0 " + " WHERE IDCLIENTE=? ";
+		String sql = " UPDATE TELEFONE " + " SET idCliente=NULL, ativo=0 " + " WHERE IDCLIENTE=? ";
 
 		PreparedStatement stmt = Banco.getPreparedStatement(conn, sql);
 
@@ -104,8 +93,9 @@ public class TelefoneDAO {
 	}
 
 	public boolean alterar(Telefone telefone) {
+
 		Connection conn = Banco.getConnection();
-		String sql = " UPDATE TELEFONE " + " SET codigoPais=?, ddd=?, numero=?, tipoLinha=?, idCliente=?, ativo=? "
+		String sql = " UPDATE TELEFONE " + " SET codigoPais=?, ddd=?, numero=?, movel=?, idCliente=?, ativo=? "
 				+ " WHERE ID=? ";
 
 		PreparedStatement stmt = Banco.getPreparedStatement(conn, sql);
@@ -124,6 +114,7 @@ public class TelefoneDAO {
 			stmt.setInt(6, telefone.isAtivo() ? 1 : 0);
 			stmt.setInt(7, telefone.getId());
 			quantidadeLinhasAfetadas = stmt.executeUpdate();
+
 		} catch (SQLException e) {
 			System.out.println("Erro ao atualizar telefone.");
 			System.out.println("Erro: " + e.getMessage());
@@ -133,9 +124,10 @@ public class TelefoneDAO {
 	}
 
 	public Telefone consultarPorId(int id) {
+
 		Connection conn = Banco.getConnection();
-		String sql = " SELECT id, codigoPais, ddd, numero, tipoLinha, idCliente, ativo " + " FROM TELEFONE "
-				+ " WHERE ID=" + id;
+		String sql = " SELECT id, codigoPais, ddd, numero, movel, idCliente, ativo " + " FROM TELEFONE " + " WHERE ID="
+				+ id;
 
 		Statement stmt = Banco.getStatement(conn);
 
@@ -157,7 +149,7 @@ public class TelefoneDAO {
 
 	public ArrayList<Telefone> consultarTodos() {
 		Connection conn = Banco.getConnection();
-		String sql = " SELECT id, codigoPais, ddd, numero, tipoLinha, idCliente, ativo " + " FROM TELEFONE ";
+		String sql = " SELECT id, codigoPais, ddd, numero, movel, idCliente, ativo " + " FROM TELEFONE ";
 
 		Statement stmt = Banco.getStatement(conn);
 		ArrayList<Telefone> telefones = new ArrayList<Telefone>();
@@ -178,12 +170,14 @@ public class TelefoneDAO {
 	}
 
 	public ArrayList<Telefone> consultarTodosPorIdCliente(int idCliente) {
-		Connection conn = Banco.getConnection();
-		String sql = " SELECT id, codigoPais, ddd, numero, tipoLinha, idCliente, ativo " + " FROM TELEFONE "
-				+ " WHERE IDCLIENTE = " + idCliente;
 
+		Connection conn = Banco.getConnection();
+		String sql = " SELECT id, codigoPais, ddd, numero, movel, idCliente, ativo " + " FROM TELEFONE "
+				+ " WHERE IDCLIENTE = " + idCliente;
 		Statement stmt = Banco.getStatement(conn);
+
 		ArrayList<Telefone> telefones = new ArrayList<Telefone>();
+
 		try {
 			ResultSet resultadoDaConsulta = stmt.executeQuery(sql);
 
@@ -200,15 +194,6 @@ public class TelefoneDAO {
 		return telefones;
 	}
 
-	/**
-	 * 
-	 * Constrói um objeto do tipo Telefone a partir de um registro do resultSet
-	 * 
-	 * @param resultadoDaConsulta o item do resultSet (isto é, um registro da tabela
-	 *                            Telefone)
-	 * @return um objeto do tipo Telefone
-	 * 
-	 */
 	private Telefone construirTelefoneDoResultSet(ResultSet resultadoDaConsulta) {
 		Telefone telefone;
 		telefone = new Telefone();
@@ -232,10 +217,9 @@ public class TelefoneDAO {
 	}
 
 	public boolean telefoneJaCadastrado(Telefone novoTelefone) {
-		String sql = " SELECT ID FROM TELEFONE T " 
-				+ " WHERE T.CODIGOPAIS = " + novoTelefone.getCodigoPais()
-				+ " AND T.DDD = " + novoTelefone.getDdd() 
-				+ " AND T.NUMERO = " + novoTelefone.getNumero();
+
+		String sql = " SELECT ID FROM TELEFONE T " + " WHERE T.CODIGOPAIS = " + novoTelefone.getCodigoPais()
+				+ " AND T.DDD = " + novoTelefone.getDdd() + " AND T.NUMERO = " + novoTelefone.getNumero();
 
 		Connection conn = Banco.getConnection();
 		Statement stmt = Banco.getStatement(conn);
@@ -256,6 +240,25 @@ public class TelefoneDAO {
 		}
 
 		return telefoneJaCadastrado;
+	}
+
+	public boolean verificarSeClienteTemTelefone(int idCliente) {
+
+		Connection conn = Banco.getConnection();
+		String sql = " SELECT id FROM TELEFONE " + " WHERE IDCLIENTE = " + idCliente;
+		Statement stmt = Banco.getStatement(conn);
+		boolean temTelefone = false;
+
+		try {
+			ResultSet rs = stmt.executeQuery(sql);
+			temTelefone = rs.next();
+
+		} catch (SQLException e) {
+			System.out.println("Erro ao verificar se Cliente tem telefone por idCliente. Idcliente: " + idCliente);
+			System.out.println("Erro: " + e.getMessage());
+		}
+
+		return temTelefone;
 	}
 
 }
